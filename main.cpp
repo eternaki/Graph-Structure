@@ -3,27 +3,33 @@
 
 using namespace std;
 
-class Vector {
+class Vector
+{
 public:
-    int *data;
-    int size;
-    int capacity;
+    long long *data;
+    long long size;
+    long long capacity;
 
-    Vector() {
+    Vector()
+    {
         size = 0;
         capacity = 1;
-        data = new int[capacity];
+        data = new long long[capacity];
     }
 
-    ~Vector() {
+    ~Vector()
+    {
         delete[] data;
     }
 
-    void push_back(int value) {
-        if (size == capacity) {
+    void push_back(long long value)
+    {
+        if (size == capacity)
+        {
             capacity *= 2;
-            int *new_data = new int[capacity];
-            for (int i = 0; i < size; i++) {
+            long long *new_data = new long long[capacity];
+            for (long long i = 0; i < size; i++)
+            {
                 new_data[i] = data[i];
             }
             delete[] data;
@@ -32,100 +38,123 @@ public:
         data[size++] = value;
     }
 
-    int& operator[](int index) {
+    long long &operator[](long long index)
+    {
         return data[index];
     }
 
-    const int& operator[](int index) const {
+    const long long &operator[](long long index) const
+    {
         return data[index];
     }
 };
 
-class Queue {
+class Queue
+{
 public:
-    int *data;
-    int front, rear, size, capacity;
+    long long *data;
+    long long front, rear, size, capacity;
 
-    Queue(int cap) : capacity(cap) {
-        data = new int[capacity];
+    Queue(long long cap) : capacity(cap)
+    {
+        data = new long long[capacity];
         front = 0;
         size = 0;
         rear = capacity - 1;
     }
 
-    ~Queue() {
+    ~Queue()
+    {
         delete[] data;
     }
 
-    bool empty() const {
+    bool empty() const
+    {
         return size == 0;
     }
 
-    void push(int value) {
+    void push(long long value)
+    {
         rear = (rear + 1) % capacity;
         data[rear] = value;
         size++;
     }
 
-    int pop() {
-        int value = data[front];
+    long long pop()
+    {
+        long long value = data[front];
         front = (front + 1) % capacity;
         size--;
         return value;
     }
 };
 
-class Graph {
+class Graph
+{
 private:
-    int n; // Количество вершин
+    long long n; // Количество вершин
     Vector *adj; // Список смежности
 
 public:
-    Graph(int n) : n(n) {
+    Graph(long long n) : n(n)
+    {
         adj = new Vector[n];
     }
 
-    ~Graph() {
+    ~Graph()
+    {
         delete[] adj;
     }
 
-    void addEdge(int u, int v) {
-        for (int i = 0; i < adj[u].size; i++) {
-            if (adj[u][i] == v) return;
+    void addEdge(long long u, long long v)
+    {
+        for (long long i = 0; i < adj[u].size; i++)
+        {
+            if (adj[u][i] == v)
+                return;
         }
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
 
-    void readGraph() {
-        int num_neighbors, neighbor;
-        for (int i = 0; i < n; i++) {
-            scanf("%d", &num_neighbors);
-            for (int j = 0; j < num_neighbors; j++) {
-                scanf("%d", &neighbor);
+    void readGraph()
+    {
+        long long num_neighbors, neighbor;
+        for (long long i = 0; i < n; i++)
+        {
+            scanf("%lld", &num_neighbors);
+            for (long long j = 0; j < num_neighbors; j++)
+            {
+                scanf("%lld", &neighbor);
                 addEdge(i, neighbor - 1); // Преобразуем к нулевой индексации
             }
         }
     }
 
-    void printDegrees() {
-        int *degrees = new int[n];
-        for (int i = 0; i < n; i++) {
+    void printDegrees()
+    {
+        long long *degrees = new long long[n];
+        for (long long i = 0; i < n; i++)
+        {
             degrees[i] = adj[i].size;
         }
-        quickSort(degrees, 0, n - 1);
-        for (int i = 0; i < n; i++) {
-            printf("%d ", degrees[i]);
+        mergeSort(degrees, 0, n - 1);
+        for (long long i = 0; i < n; i++)
+        {
+            printf("%lld ", degrees[i]);
         }
         printf("\n");
         delete[] degrees;
     }
 
-    int countComponents() {
-        int count = 0;
+    long long countComponents()
+    {
+        long long count = 0;
         bool *visited = new bool[n]();
-        for (int i = 0; i < n; i++) {
-            if (!visited[i]) {
+        for (long long i = 0; i < n; i++)
+        {
+            if (!visited[i])
+            {
                 dfs(i, visited);
                 count++;
             }
@@ -134,15 +163,20 @@ public:
         return count;
     }
 
-    bool isBipartite() {
-        int *colors = new int[n];
-        for (int i = 0; i < n; i++) {
+    bool isBipartite()
+    {
+        long long *colors = new long long[n];
+        for (long long i = 0; i < n; i++)
+        {
             colors[i] = -1;
         }
 
-        for (int i = 0; i < n; i++) {
-            if (colors[i] == -1) {
-                if (!bfsCheckBipartite(i, colors)) {
+        for (long long i = 0; i < n; i++)
+        {
+            if (colors[i] == -1)
+            {
+                if (!bfsCheckBipartite(i, colors))
+                {
                     delete[] colors;
                     return false;
                 }
@@ -152,20 +186,26 @@ public:
         return true;
     }
 
-    void printEccentricities() {
-        int *eccentricities = new int[n];
+    void printEccentricities()
+    {
+        long long *eccentricities = new long long[n];
         bool *visited = new bool[n]();
 
-        for (int i = 0; i < n; i++) {
-            if (!visited[i]) {
+        for (long long i = 0; i < n; i++)
+        {
+            if (!visited[i])
+            {
                 Vector component = bfsComponent(i, visited);
-                for (int j = 0; j < component.size; j++) {
-                    int vertex = component[j];
-                    int farthestVertex = bfsFarthestVertex(vertex);
-                    int *dist = bfsDistances(farthestVertex);
-                    for (int k = 0; k < component.size; k++) {
-                        int u = component[k];
-                        if (eccentricities[u] < dist[u]) {
+                for (long long j = 0; j < component.size; j++)
+                {
+                    long long vertex = component[j];
+                    long long farthestVertex = bfsFarthestVertex(vertex);
+                    long long *dist = bfsDistances(farthestVertex);
+                    for (long long k = 0; k < component.size; k++)
+                    {
+                        long long u = component[k];
+                        if (eccentricities[u] < dist[u])
+                        {
                             eccentricities[u] = dist[u];
                         }
                     }
@@ -174,8 +214,9 @@ public:
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            printf("%d ", eccentricities[i]);
+        for (long long i = 0; i < n; i++)
+        {
+            printf("%lld ", eccentricities[i]);
         }
         printf("\n");
 
@@ -183,61 +224,73 @@ public:
         delete[] visited;
     }
 
-    int countEdges() {
-        int edgeCount = 0;
-        for (int i = 0; i < n; i++) {
+    long long countEdges()
+    {
+        long long edgeCount = 0;
+        for (long long i = 0; i < n; i++)
+        {
             edgeCount += adj[i].size;
         }
         return edgeCount / 2; // Каждое ребро считается дважды
     }
 
-    int countComplementEdges() {
-        int totalEdges = (n * (n - 1)) / 2; // Полное количество рёбер в полном графе
-        int graphEdges = countEdges();
+    long long countComplementEdges()
+    {
+        long long totalEdges = (n * (n - 1)) / 2; // Полное количество рёбер в полном графе
+        long long graphEdges = countEdges();
         return totalEdges - graphEdges;
     }
 
-    void colorGraph() {
-        int *colors = new int[n];
-        for (int i = 0; i < n; i++) {
+    void colorGraph()
+    {
+        long long *colors = new long long[n];
+        for (long long i = 0; i < n; i++)
+        {
             colors[i] = -1; // Инициализируем все вершины без цвета
         }
 
         bool *available = new bool[n];
-        for (int i = 0; i < n; i++) {
+        for (long long i = 0; i < n; i++)
+        {
             available[i] = true; // Все цвета доступны
         }
 
-        for (int i = 0; i < n; i++) {
+        for (long long i = 0; i < n; i++)
+        {
             // Отмечаем все цвета соседей как недоступные
-            for (int j = 0; j < adj[i].size; j++) {
-                int neighbor = adj[i][j];
-                if (colors[neighbor] != -1) {
+            for (long long j = 0; j < adj[i].size; j++)
+            {
+                long long neighbor = adj[i][j];
+                if (colors[neighbor] != -1)
+                {
                     available[colors[neighbor]] = false;
                 }
             }
 
             // Ищем первый доступный цвет
-            int color;
-            for (color = 0; color < n; color++) {
-                if (available[color]) {
+            long long color;
+            for (color = 0; color < n; color++)
+            {
+                if (available[color])
+                {
                     break;
                 }
             }
 
-            colors[i] = color; // Назначаем вершине найденный цвет
-
-            // Возвращаем все цвета как доступные
-            for (int j = 0; j < adj[i].size; j++) {
-                int neighbor = adj[i][j];
-                if (colors[neighbor] != -1) {
+            colors[i] = color; //// Возвращаем все цвета как доступные
+            for (long long j = 0; j < adj[i].size; j++)
+            {
+                long long neighbor = adj[i][j];
+                if (colors[neighbor] != -1)
+                {
                     available[colors[neighbor]] = true;
                 }
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            printf("%d ", colors[i] + 1); // Выводим цвета (начиная с 1)
+        for (long long i = 0; i < n; i++)
+        {
+            printf("%lld ", colors[i] + 1); // Выводим цвета (начиная с 1)
         }
         printf("\n");
 
@@ -246,29 +299,37 @@ public:
     }
 
 private:
-    void dfs(int v, bool *visited) {
+    void dfs(long long v, bool *visited)
+    {
         visited[v] = true;
-        for (int i = 0; i < adj[v].size; i++) {
-            int u = adj[v][i];
-            if (!visited[u]) {
+        for (long long i = 0; i < adj[v].size; i++)
+        {
+            long long u = adj[v][i];
+            if (!visited[u])
+            {
                 dfs(u, visited);
             }
         }
     }
-
-    bool bfsCheckBipartite(int s, int *colors) {
+    bool bfsCheckBipartite(long long s, long long *colors)
+    {
         Queue q(n);
         q.push(s);
         colors[s] = 0;
 
-        while (!q.empty()) {
-            int u = q.pop();
-            for (int i = 0; i < adj[u].size; i++) {
-                int v = adj[u][i];
-                if (colors[v] == -1) {
+        while (!q.empty())
+        {
+            long long u = q.pop();
+            for (long long i = 0; i < adj[u].size; i++)
+            {
+                long long v = adj[u][i];
+                if (colors[v] == -1)
+                {
                     colors[v] = 1 - colors[u];
                     q.push(v);
-                } else if (colors[v] == colors[u]) {
+                }
+                else if (colors[v] == colors[u])
+                {
                     return false;
                 }
             }
@@ -276,20 +337,25 @@ private:
         return true;
     }
 
-    int* bfsDistances(int start) {
-        int *dist = new int[n];
-        for (int i = 0; i < n; i++) {
+    long long *bfsDistances(long long start)
+    {
+        long long *dist = new long long[n];
+        for (long long i = 0; i < n; i++)
+        {
             dist[i] = n; // Используем n как "бесконечность"
         }
         Queue q(n);
         q.push(start);
         dist[start] = 0;
 
-        while (!q.empty()) {
-            int v = q.pop();
-            for (int i = 0; i < adj[v].size; i++) {
-                int neighbor = adj[v][i];
-                if (dist[neighbor] == n) {
+        while (!q.empty())
+        {
+            long long v = q.pop();
+            for (long long i = 0; i < adj[v].size; i++)
+            {
+                long long neighbor = adj[v][i];
+                if (dist[neighbor] == n)
+                {
                     dist[neighbor] = dist[v] + 1;
                     q.push(neighbor);
                 }
@@ -299,25 +365,31 @@ private:
         return dist;
     }
 
-    int bfsFarthestVertex(int start) {
-        int *dist = new int[n];
-        for (int i = 0; i < n; i++) {
+    long long bfsFarthestVertex(long long start)
+    {
+        long long *dist = new long long[n];
+        for (long long i = 0; i < n; i++)
+        {
             dist[i] = n; // Используем n как "бесконечность"
         }
         Queue q(n);
         q.push(start);
         dist[start] = 0;
 
-        int farthestVertex = start;
+        long long farthestVertex = start;
 
-        while (!q.empty()) {
-            int v = q.pop();
-            for (int i = 0; i < adj[v].size; i++) {
-                int neighbor = adj[v][i];
-                if (dist[neighbor] == n) {
+        while (!q.empty())
+        {
+            long long v = q.pop();
+            for (long long i = 0; i < adj[v].size; i++)
+            {
+                long long neighbor = adj[v][i];
+                if (dist[neighbor] == n)
+                {
                     dist[neighbor] = dist[v] + 1;
                     q.push(neighbor);
-                    if (dist[neighbor] > dist[farthestVertex]) {
+                    if (dist[neighbor] > dist[farthestVertex])
+                    {
                         farthestVertex = neighbor;
                     }
                 }
@@ -328,18 +400,22 @@ private:
         return farthestVertex;
     }
 
-    Vector bfsComponent(int start, bool *visited) {
+    Vector bfsComponent(long long start, bool *visited)
+    {
         Vector component;
         Queue q(n);
         q.push(start);
         visited[start] = true;
         component.push_back(start);
 
-        while (!q.empty()) {
-            int v = q.pop();
-            for (int i = 0; i < adj[v].size; i++) {
-                int neighbor = adj[v][i];
-                if (!visited[neighbor]) {
+        while (!q.empty())
+        {
+            long long v = q.pop();
+            for (long long i = 0; i < adj[v].size; i++)
+            {
+                long long neighbor = adj[v][i];
+                if (!visited[neighbor])
+                {
                     visited[neighbor] = true;
                     q.push(neighbor);
                     component.push_back(neighbor);
@@ -350,61 +426,91 @@ private:
         return component;
     }
 
-    void quickSort(int *array, int left, int right) {
-        if (left < right) {
-            int pivot = partition(array, left, right);
-            quickSort(array, left, pivot - 1);
-            quickSort(array, pivot + 1, right);
+    void mergeSort(long long *array, long long left, long long right)
+    {
+        if (left < right)
+        {
+            long long mid = left + (right - left) / 2;
+            mergeSort(array, left, mid);
+            mergeSort(array, mid + 1, right);
+            merge(array, left, mid, right);
         }
     }
 
-    int partition(int *array, int left, int right) {
-        int pivot = array[right];
-        int i = left - 1;
+    void merge(long long *array, long long left, long long mid, long long right)
+    {
+        long long n1 = mid - left + 1;
+        long long n2 = right - mid;
 
-        for (int j = left; j < right; j++) {
-            if (array[j] >= pivot) {
+        long long *L = new long long[n1];
+        long long *R = new long long[n2];
+
+        for (long long i = 0; i < n1; i++)
+        {
+            L[i] = array[left + i];
+        }
+        for (long long j = 0; j < n2; j++)
+        {
+            R[j] = array[mid + 1 + j];
+        }
+
+        long long i = 0, j = 0, k = left;
+
+        while (i < n1 && j < n2)
+        {
+            if (L[i] >= R[j])
+            {
+                array[k] = L[i];
                 i++;
-                swap(array[i], array[j]);
             }
+            else
+            {
+                array[k] = R[j];
+                j++;
+            }
+            k++;
         }
-        swap(array[i + 1], array[right]);
-        return i + 1;
-    }
 
-    void sortDescending(int *array, int size) {
-        for (int i = 0; i < size - 1; i++) {
-            for (int j = 0; j < size - i - 1; j++) {
-                if (array[j] < array[j + 1]) {
-                    int temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                }
-            }
+        while (i < n1)
+        {
+            array[k] = L[i];
+            i++;
+            k++;
         }
+
+        while (j < n2)
+        {
+            array[k] = R[j];
+            j++;
+            k++;
+        }
+
+        delete[] L;
+        delete[] R;
     }
 };
 
-int main() {
-    int k;
-    scanf("%d", &k);
-    while (k--) {
-        int n;
-        scanf("%d", &n);
+int main()
+{
+    long long k;
+    scanf("%lld", &k);
+    while (k--)
+    {
+        long long n;
+        scanf("%lld", &n);
         Graph g(n);
         g.readGraph();
         g.printDegrees();
-        printf("%d\n", g.countComponents());
+        printf("%lld\n", g.countComponents());
         printf("%s\n", g.isBipartite() ? "T" : "F");
         // g.printEccentricities(); // Выводим эксцентриситеты
         printf("?\n");
-        printf("?\n"); // Планарность
+        printf("?\n");  // Планарность
         g.colorGraph(); // Цвета вершин, методы раскраски
-        printf("?\n"); // Планарность
+        printf("?\n");  // Планарность
         printf("?\n");
-        printf("?\n"); // Число разных подграфов C4
-        printf("%d\n", g.countComplementEdges()); // Число рёбер дополнения графа
-
+        printf("?\n");
+        printf("%lld\n", g.countComplementEdges());
     }
     return 0;
 }
