@@ -92,13 +92,13 @@ public:
 class Graph
 {
 private:
-    long long n;               // Количество вершин
+    long long n;               // peaks counter
     Vector *adj;               // Список смежности
     long long *saturation;     // Nasycenie wierzchołków
     long long *neighborColors; // Ilość kolorów użytych przez sąsiadów
 
 public:
-    Graph(long long n) : n(n)
+    Graph(long long peaks) : n(peaks)
     {
         adj = new Vector[n];
         saturation = new long long[n]();     // Inicjalizujemy wszystkie wartości na 0
@@ -381,29 +381,30 @@ public:
     }
 
     // Metoda do kolorowania wierzchołków za pomocą algorytmu SLF
+    // Метода для окраски вершин графа с использованием алгоритма SLF
     void colorGraphSLF()
     {
         long long *colors = new long long[n];
         for (long long i = 0; i < n; i++)
         {
-            colors[i] = -1; // Inicjalizujemy wszystkie wierzchołki jako bez koloru
+            colors[i] = -1; // Инициализируем все вершины без цвета
         }
 
         for (long long i = 0; i < n; i++)
         {
-            long long vertex = getSLFVertex(colors); // Wybieramy wierzchołek do pokolorowania
+            long long vertex = getSLFVertex(colors); // Выбираем вершину для окраски
 
-            // Pokolorowani wierzchołka
+            // Окраска вершины
             colors[vertex] = getAvailableColor(vertex, colors);
 
-            // Aktualizacja nasycenia i ilości kolorów użytych przez sąsiadów
+            // Обновление насыщенности и количества цветов, используемых соседями
             updateSaturationAndNeighborColors(vertex, colors);
         }
 
-        // Wypisujemy kolory wierzchołków
+        // Выводим цвета вершин
         for (long long i = 0; i < n; i++)
         {
-            printf("%lld ", colors[i] + 1); // Wypisujemy kolory (zaczynając od 1)
+            printf("%lld ", colors[i] + 1); // Выводим цвета (начиная с 1)
         }
         printf("\n");
 
@@ -586,28 +587,27 @@ private:
         return color;
     }
 
-    // Metoda do aktualizowania nasycenia i ilości kolorów użytych przez sąsiadów wierzchołka
-    // Metoda do aktualizowania nasycenia i ilości kolorów użytych przez sąsiadów wierzchołka
-    // Metoda do aktualizowania nasycenia i ilości kolorów użytych przez sąsiadów wierzchołka
+    // Метод для обновления насыщенности и количества цветов, используемых соседями вершины
     void updateSaturationAndNeighborColors(long long vertex, const long long *colors)
     {
         for (long long i = 0; i < adj[vertex].size; i++)
         {
             long long neighbor = adj[vertex][i];
-            if (colors[neighbor] == -1) // Jeśli sąsiad nie jest pokolorowany
-            {
-                // Zwiększamy nasycenie tylko dla niepokolorowanych sąsiadów
-                saturation[neighbor]++;
-
-                // Zwiększamy ilość kolorów użytych przez sąsiada tylko dla niepokolorowanych sąsiadów
+            if (colors[neighbor] == -1)
+            {                           // Если сосед не покрашен
+                bool isNewColor = true; // Флаг для проверки нового цвета
                 for (long long j = 0; j < adj[neighbor].size; j++)
                 {
                     long long neighborOfNeighbor = adj[neighbor][j];
-                    if (colors[neighborOfNeighbor] != -1)
+                    if (neighborOfNeighbor != vertex && colors[neighborOfNeighbor] == colors[vertex])
                     {
-                        neighborColors[neighbor]++;
-                        break; // Przerywamy pętlę, jeśli znaleziono pokolorowanego sąsiada
+                        isNewColor = false;
+                        break;
                     }
+                }
+                if (isNewColor)
+                {
+                    saturation[neighbor]++;
                 }
             }
         }
@@ -827,18 +827,18 @@ int main()
         scanf("%lld", &n);
         Graph g(n);
         g.readGraph();
-        g.printDegrees();
-        printf("%lld\n", g.countComponents());
-        printf("%s\n", g.isBipartite() ? "T" : "F");
-        // g.printEccentricities(); // Выводим эксцентриситеты
-        printf("?\n");
-        printf("?\n");     // Планарность
-        g.colorGraph();    // Цвета вершин, обычный метод раскраски
-        g.colorGraphLF();  // Цвета вершин, метод раскраски LF
-        // g.colorGraphSLF(); // Цвета вершин, метод раскраски SLF
-        printf("?\n");
-        printf("?\n");
-        printf("%lld\n", g.countComplementEdges());
+        g.printDegrees(); // 1
+        printf("%lld\n", g.countComponents()); // 2
+        printf("%s\n", g.isBipartite() ? "T" : "F"); // 3
+        // g.printEccentricities(); // 4
+        printf("?\n"); // 5
+        printf("?\n"); // 6
+        g.colorGraph(); // 7
+        g.colorGraphLF(); // 8
+        g.colorGraphSLF(); // 9
+        // printf("?\n"); // 10
+        printf("?\n"); // 11
+        printf("%lld\n", g.countComplementEdges()); // 12
     }
     return 0;
 }
